@@ -5,13 +5,13 @@ import Footer from './components/Footer'
 
 const Layout = () => {
   return (
-    <>
+    <div className='bg-slate-100'>
         <Header />
-        <div>
+        <div className='bg-slate-100'>
         <Outlet />
         </div>
         <Footer />
-    </>
+    </div>
   )
 }
 

@@ -2,23 +2,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css'; 
-import logo from '../assets/logo.png';
+import Logo from '../assets/logo_slug.png';
 
 const Header = () => {
   return (
-    <header className="header">
-      <div className="header-container">
-        <Link to="/" className="header-logo">
-          <img src={logo} alt="Logo" className="header-logo-image" />
-        </Link>
-        <nav className="header-nav">
-          <Link to="/" className="header-link">Accueil</Link>
-          <Link to="/transactions" className="header-link">Transactions</Link>
-          <Link to="/signin" className="header-link">Se connecter</Link>
-          <Link to="/signup" className="header-link">S'inscrire</Link>
-        </nav>
-      </div>
-    </header>
+    <header className="bg-white shadow">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <img src={Logo} className='w-32' alt="Logo"/>
+          </div>
+          <nav className="hidden md:flex space-x-8">
+            <Link to="#" className="text-gray-600 hover:text-blue-600">Home</Link>
+            <Link to="#" className="text-gray-600 hover:text-blue-600">Features</Link>
+            <Link to="#" className="text-gray-600 hover:text-blue-600">Pricing</Link>
+            <Link to="#" className="text-gray-600 hover:text-blue-600">About</Link>
+            <Link to="#" className="text-gray-600 hover:text-blue-600">Contact</Link>
+          </nav>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300">
+            Login
+          </button>
+        </div>
+      </header>
   );
 };
 
