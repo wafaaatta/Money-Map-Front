@@ -3,7 +3,7 @@ import axios from "axios";
 import { apiUrl } from "../../constants/app_constants";
 import ApiError from "../../ApiError";
 import axiosHttp from "../../utils/axiosClient";
-import { saveAuthenticationToken, saveUser } from "../../utils/authentication";
+import { checkAuthentication, getAuthenticationToken, saveAuthenticationToken, saveUser } from "../../utils/authentication";
 
 const initialState = {
     isAuthenticated: false,
@@ -51,6 +51,12 @@ const authSlice = createSlice({
             state.error = null;
             state.token = null;
         },
+
+        initialize: (state) => {
+            state.isAuthenticated = checkAuthentication();
+            state.user = JSON.parse(localStorage.getItem('user'));
+            state.token = getAuthenticationToken();
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -94,5 +100,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, initialize } = authSlice.actions;
 export default authSlice.reducer

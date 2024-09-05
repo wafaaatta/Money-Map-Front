@@ -24,14 +24,29 @@ export const getTransactions = createAsyncThunk(
 
 export const createTransaction = createAsyncThunk(
     'transactions/createTransaction',
-    async ({ type, amount, description }) => {
+    async ({ type, amount, description, transaction_date }) => {
         try{
             const response = await axiosHttp.post(`transactions`, {
                 type,
                 amount,
-                description
+                description,
+                transaction_date
             });
             return response.data;
+        }catch(error){
+            throw ApiError.from(error);
+        }
+    }
+)
+
+export const deleteTransaction = createAsyncThunk(
+    'transactions/deleteTransaction',
+    async (id) => {
+        try{
+            console.log(id);
+            
+            await axiosHttp.delete(`transactions/${id}`);
+            return {id};
         }catch(error){
             throw ApiError.from(error);
         }
@@ -71,6 +86,21 @@ const transactionsSlice = createSlice({
                 state.error = action.error.message;
             })
             .addCase(createTransaction.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+
+            .addCase(deleteTransaction.fulfilled, (state, action) => {
+                state.transactions = state.transactions.filter(transaction => transaction.id !== action.payload.id);
+                state.loading = false;
+                state.error = null;
+            })
+
+            .addCase(deleteTransaction.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            .addCase(deleteTransaction.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })

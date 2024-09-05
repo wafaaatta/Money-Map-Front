@@ -14,11 +14,13 @@ export default function VueAccueil() {
               <span className="text-blue-600">Suivez chaque transaction</span>
             </h1>
             <p className="text-gray-600 mb-8">
-              TransactPro offre une plateforme puissante et intuitive pour gérer vos transactions personnelles et professionnelles. Obtenez des insights, restez organisé et prenez des décisions financières éclairées en toute simplicité.
+              <span className="font-bold">MoneyMap</span> offre une plateforme puissante et intuitive pour gérer vos transactions personnelles et professionnelles. Obtenez des insights, restez organisé et prenez des décisions financières éclairées en toute simplicité.
             </p>
-            <button className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition duration-300 flex items-center">
-              Commencer <ChevronRight className="ml-2" />
-            </button>
+            <a href="/signin">
+                <button className="font-bold text-lg bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition duration-300 flex items-center">
+                <span>Commencer</span>
+                </button>
+            </a>
           </div>
           <div className="hidden md:block">
             <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Gestion financière" className="w-full h-auto rounded-lg shadow-lg" />
@@ -103,7 +105,7 @@ export default function VueAccueil() {
           <div className="max-w-3xl mx-auto text-center text-white">
             <h2 className="text-3xl font-bold mb-6">Ce que disent nos utilisateurs</h2>
             <blockquote className="text-xl italic mb-4">
-              "TransactPro a complètement transformé ma façon de gérer mes finances. Les insights que j'ai obtenus m'ont aidé à économiser de l'argent et à prendre de meilleures décisions financières."
+              "<span className="font-bold">MoneyMap</span> a complètement transformé ma façon de gérer mes finances. Les insights que j'ai obtenus m'ont aidé à économiser de l'argent et à prendre de meilleures décisions financières."
             </blockquote>
             <p className="font-semibold">- Sarah Johnson, Propriétaire de petite entreprise</p>
           </div>

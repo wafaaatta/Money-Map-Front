@@ -1,42 +1,110 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PlusIcon, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { PlusIcon } from 'lucide-react';
 import Modal from '../components/Modal';
 import Select from '../components/select';
 import { Input } from '../components/inputField';
-import DatePicker from 'react-datepicker';
 import { Card } from '../components/Card';
-
-const categories = [
-  'Alimentation', 'Transport', 'Logement', 'Loisirs', 'Santé', 'Éducation', 'Autres'
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { createTransaction, deleteTransaction, getTransactions } from '../redux/features/transactions_store';
+import moment from 'moment/moment';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { showNotification } from '../redux/features/notification_store';
+import { DangerModal } from '../components/DangerModal';
 
 const TransactionsView = () => {
-  const [transactions, setTransactions] = useState([
-    { id: 1, type: 'revenu', montant: 1000, description: 'Salaire', date: '2023-05-01', categorie: 'Autres' },
-    { id: 2, type: 'depense', montant: 50, description: 'Courses', date: '2023-05-02', categorie: 'Alimentation' },
-    { id: 3, type: 'depense', montant: 100, description: 'Factures', date: '2023-05-03', categorie: 'Logement' },
-    { id: 4, type: 'revenu', montant: 200, description: 'Freelance', date: '2023-05-04', categorie: 'Autres' },
-  ]);
-
-  const [nouvelleTransaction, setNouvelleTransaction] = useState({
-    type: 'revenu',
-    montant: 0,
-    description: '',
-    date: '',
-    categorie: 'Autres',
-  });
+  
 
   const [modalOuverte, setModalOuverte] = useState(false);
+  const [isDeleteModalOuverte, setIsDeleteModalOuverte] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const id = transactions.length + 1;
-    setTransactions((prev) => [...prev, { ...nouvelleTransaction, id, montant: Number(nouvelleTransaction.montant) }]);
-    setNouvelleTransaction({ type: 'revenu', montant: 0, description: '', date: '', categorie: 'Autres' });
-    setModalOuverte(false);
+  const [currentTransaction, setCurrentTransaction] = useState(null);
+
+  const [type, setType] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [description, setDescription] = useState('');
+
+  const openDeleteModal = (transaction) => {
+    setIsDeleteModalOuverte(true)
+    setCurrentTransaction(transaction)
+  }
+
+
+  const handleSubmit = async () => {
+    if(!type || !amount || !description) return
+    
+    console.log({
+      type,
+      amount,
+      description
+    });
+
+
+    await dispatch(
+      createTransaction({
+        type,
+        amount,
+        description,
+        transaction_date: moment().format('YYYY-MM-DD'),
+      })
+    ).then(unwrapResult)
+    .then(() => {
+      setModalOuverte(false)
+      dispatch(
+        showNotification({
+          type: 'success',
+          message: 'Transaction ajoutée',
+          description: 'Votre transaction a été ajoutée',
+        })
+      )
+    }).catch((error) => {
+      const errorMessage = error.message;
+      dispatch(
+        showNotification({
+          type: 'error',
+          message: 'Erreur de connexion',
+          description: errorMessage,
+        })
+      )
+      setModalOuverte(false)
+    });
+    
   };
+
+  const {transactions} = useSelector(state => state.transactions_store)
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getTransactions())
+  }, [dispatch])
+
+  const handleDeleteTransaction = async () => {
+    await dispatch(
+      deleteTransaction(currentTransaction.id)
+    ).then(unwrapResult)
+    .then(() => {
+      setIsDeleteModalOuverte(false)
+      dispatch(
+        showNotification({
+          type: 'success',
+          message: 'Transaction supprimée',
+          description: 'Votre transaction a été supprimée',
+        })
+      )
+    }).catch((error) => {
+      const errorMessage = error.message;
+      dispatch(
+        showNotification({
+          type: 'error',
+          message: 'Erreur de connexion',
+          description: errorMessage,
+        })
+      )
+      setIsDeleteModalOuverte(false)
+    });
+  }
+  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -73,9 +141,21 @@ const TransactionsView = () => {
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Date
                       </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200 border">
+                    {
+                      transactions.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="px-6 text-center py-4 whitespace-nowrap text-lg font-medium text-gray-900">
+                            Aucune transaction
+                          </td>
+                        </tr>
+                      )
+                    }
                     {transactions.map((transaction) => (
                       <motion.tr
                         key={transaction.id}
@@ -87,20 +167,28 @@ const TransactionsView = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              transaction.type === 'revenu' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}
                           >
-                            {transaction.type === 'revenu' ? 'Revenu' : 'Dépense'}
+                            {transaction.type === 'income' ? 'Revenu' : 'Dépense'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.montant.toFixed(2)} €
+                          {transaction.amount} €
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {transaction.description}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {transaction.date}
+                          {transaction.transaction_date}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => openDeleteModal(transaction)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Supprimer
+                          </button>
                         </td>
                       </motion.tr>
                     ))}
@@ -119,18 +207,21 @@ const TransactionsView = () => {
                       Ajouter une nouvelle transaction
                     </h3>
                     <div className="mt-2">
-                      <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-6">
                         <div className="">
                         <Select 
+                        onChange={e => setType(e)}
                         placeholder='Catégorie'
                         className={'w-full mb-4'}
                               options={[
-                                {label: 'Revenu', value: 'revenu'},
-                                {label: 'Dépense', value: 'depense'},
+                                {label: 'Revenu', value: 'income'},
+                                {label: 'Dépense', value: 'expense'},
                               ]}	
                             />
                           <Input 
                               label="Montant"
+                              value={amount}
+                              onChange={e => setAmount(e.target.value)}
                               helperText="Montant de la transaction"
                               placeholder="Montant"
                               type="number"
@@ -138,6 +229,8 @@ const TransactionsView = () => {
                           <div className="sm:col-span-6">
                             <Input 
                               label="Description"
+                              value={description}
+                              onChange={e => setDescription(e.target.value)}
                               helperText="Description de la transaction"
                               placeholder="Description"
                             />
@@ -146,17 +239,26 @@ const TransactionsView = () => {
                         </div>
                         <div className="mt-5 sm:mt-6">
                           <button
-                            type="submit"
+                          onClick={handleSubmit}
                             className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:text-sm"
                           >
                             Ajouter la transaction
                           </button>
                         </div>
-                      </form>
+                      </div>
                     </div>
                   </div>
                 </div>
       </Modal>
+
+      <DangerModal 
+        isOpen={isDeleteModalOuverte}
+        onClose={() => setIsDeleteModalOuverte(false)}
+        title="Suppression de la transaction"
+        content="Etes-vous sûr de vouloir supprimer cette transaction?"
+        onAccept={() => handleDeleteTransaction()}
+        onCancel={() => setIsDeleteModalOuverte(false)}
+      />
     </div>
   );
 };

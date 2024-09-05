@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Chart as ChartJS, registerables } from 'chart.js';
 import { Line, Doughnut, Bar } from 'react-chartjs-2';
 import { ArrowUpIcon, ArrowDownIcon, BellIcon, CreditCardIcon, WalletIcon, ChartBarIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTransactions } from '../redux/features/transactions_store';
 
 ChartJS.register(...registerables);
 
 const TableauDeBord = () => {
   const [moisActuel, setMoisActuel] = useState('Mai');
 
+  const dispatch = useDispatch();
+  const {transactions} = useSelector((state) => state.transactions_store);
+
+  useEffect(() => {
+    dispatch(getTransactions())
+  }, [dispatch])
+
   // Données fictives pour les graphiques
   const donneesRevenusVsDepenses = {
-    labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+    labels: transactions.map(transaction => transaction.transaction_date),
     datasets: [
       {
         label: 'Revenus',
-        data: [3100, 4000, 2800, 5100, 4200, 3800, 3200],
+        data: transactions.filter(transaction => transaction.type === 'income').map(transaction => +transaction.amount),
         borderColor: 'rgb(74, 222, 128)',
         backgroundColor: 'rgba(74, 222, 128, 0.5)',
         fill: true,
@@ -23,7 +32,7 @@ const TableauDeBord = () => {
       },
       {
         label: 'Dépenses',
-        data: [2300, 3100, 2900, 3900, 3000, 3500, 2700],
+        data: transactions.filter(transaction => transaction.type === 'expense').map(transaction => +transaction.amount),
         borderColor: 'rgb(248, 113, 113)',
         backgroundColor: 'rgba(248, 113, 113, 0.5)',
         fill: true,
@@ -32,31 +41,19 @@ const TableauDeBord = () => {
     ],
   };
 
+  const incomes = transactions.filter((transaction) => transaction.type === 'income')
+  const expenses = transactions.filter((transaction) => transaction.type === 'expense')
+
+  const incomesTotal = incomes.reduce((acc, transaction) => acc + +transaction.amount, 0)
+  const expensesTotal = expenses.reduce((acc, transaction) => acc + +transaction.amount, 0)
+
   const donneesTypesTransactions = {
     labels: ['Revenus', 'Dépenses'],
     datasets: [
       {
-        data: [4000, 3000],
+        data: [incomesTotal, expensesTotal],
         backgroundColor: ['rgba(74, 222, 128, 0.8)', 'rgba(248, 113, 113, 0.8)'],
         hoverBackgroundColor: ['rgba(74, 222, 128, 1)', 'rgba(248, 113, 113, 1)'],
-      },
-    ],
-  };
-
-  const donneesCategories = {
-    labels: ['Alimentation', 'Transport', 'Loisirs', 'Santé', 'Éducation', 'Autres'],
-    datasets: [
-      {
-        label: 'Dépenses par catégorie',
-        data: [1200, 800, 600, 400, 300, 700],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.8)',
-          'rgba(54, 162, 235, 0.8)',
-          'rgba(255, 206, 86, 0.8)',
-          'rgba(75, 192, 192, 0.8)',
-          'rgba(153, 102, 255, 0.8)',
-          'rgba(255, 159, 64, 0.8)',
-        ],
       },
     ],
   };
@@ -77,7 +74,7 @@ const TableauDeBord = () => {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Revenus totaux</dt>
-                          <dd className="text-3xl font-semibold text-gray-900">23 000 €</dd>
+                          <dd className="text-3xl font-semibold text-gray-900">{incomesTotal} €</dd>
                         </dl>
                       </div>
                     </div>
@@ -97,7 +94,7 @@ const TableauDeBord = () => {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Dépenses totales</dt>
-                          <dd className="text-3xl font-semibold text-gray-900">18 000 €</dd>
+                          <dd className="text-3xl font-semibold text-gray-900">{expensesTotal} €</dd>
                         </dl>
                       </div>
                     </div>
@@ -117,7 +114,7 @@ const TableauDeBord = () => {
                       <div className="ml-5 w-0 flex-1">
                         <dl>
                           <dt className="text-sm font-medium text-gray-500 truncate">Solde net</dt>
-                          <dd className="text-3xl font-semibold text-gray-900">5 000 €</dd>
+                          <dd className="text-3xl font-semibold text-gray-900">{incomesTotal - expensesTotal} €</dd>
                         </dl>
                       </div>
                     </div>
@@ -139,7 +136,7 @@ const TableauDeBord = () => {
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="bg-white overflow-hidden shadow rounded-lg">
                   <div className="px-4 py-5 sm:p-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">Types de transactions</h3>
@@ -148,47 +145,35 @@ const TableauDeBord = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white overflow-hidden shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Dépenses par catégorie</h3>
-                    <div className="mt-5 h-64">
-                      <Bar data={donneesCategories} options={{ responsive: true, maintainAspectRatio: false }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 bg-white overflow-hidden shadow rounded-lg">
+                <div className=" bg-white h-96 overflow-auto custom-scroll shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">Transactions récentes</h3>
                   <div className="mt-5">
                     <ul className="divide-y divide-gray-200">
-                      {[
-                        { id: 1, nom: 'Supermarché', montant: -85.20, date: '2023-05-15' },
-                        { id: 2, nom: 'Salaire', montant: 2500, date: '2023-05-01' },
-                        { id: 3, nom: 'Restaurant', montant: -45.50, date: '2023-05-10' },
-                        { id: 4, nom: 'Essence', montant: -60.00, date: '2023-05-08' },
-                      ].map((transaction) => (
+                      {transactions.slice(0, 5).map((transaction) => (
                         <li key={transaction.id} className="py-4 flex items-center justify-between">
                           <div className="flex items-center">
                             <CreditCardIcon className="h-6 w-6 text-gray-400" />
                             <div className="ml-3">
-                              <p className="text-sm font-medium text-gray-900">{transaction.nom}</p>
-                              <p className="text-sm text-gray-500">{transaction.date}</p>
+                              <p className="text-sm font-medium text-gray-900">{transaction.type == 'income' ? 'Revenu' : 'Dépense'}</p>
+                              <p className="text-sm text-gray-500">{transaction.transaction_date}</p>
                             </div>
                           </div>
-                          <div className={`text-sm font-semibold ${transaction.montant > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {transaction.montant > 0 ? '+' : ''}{transaction.montant.toFixed(2)} €
+                          <div className={`text-sm font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {transaction.amount > 0 ? '+' : ''}{transaction.amount} €
                           </div>
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div className="mt-6">
-                    <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">Voir toutes les transactions<span aria-hidden="true"> &rarr;</span></a>
+                    <a href="/transactions" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">Voir toutes les transactions<span aria-hidden="true"> &rarr;</span></a>
                   </div>
                 </div>
               </div>
+              </div>
+
+              
             </div>
           </div>
         </main>

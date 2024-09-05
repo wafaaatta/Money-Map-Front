@@ -6,6 +6,7 @@ import Register from "./views/Register";
 import Login from "./views/Login";
 import Dashboard from "./views/Dashboard";
 import TransactionsView from "./views/Transactions";
+import RequireAuth from "./components/RequiredAuth";
 
 const router = createBrowserRouter([
     {
@@ -26,11 +27,15 @@ const router = createBrowserRouter([
             },
             {
                 path: "/dashboard",
-                element: <Dashboard />
+                element: <RequireAuth>
+                    <Dashboard />
+                </RequireAuth>
             },
             {
                 path: "/transactions",
-                element: <TransactionsView />
+                element: <RequireAuth>
+                    <TransactionsView />
+                </RequireAuth>
             },
         ]
     }

@@ -10,7 +10,7 @@ axiosHttp.interceptors.request.use((config) => {
     console.log('inside request intercept');
     
     const auth_token = getAuthenticationToken()
-    config.headers['token'] = auth_token
+    config.headers['Authorization'] = `Bearer ${auth_token}`
     
     return config;
 },(error) => {
