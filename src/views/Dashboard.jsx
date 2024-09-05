@@ -6,11 +6,11 @@ import { ArrowUpIcon, ArrowDownIcon, BellIcon, CreditCardIcon, WalletIcon, Chart
 
 ChartJS.register(...registerables);
 
-const Dashboard = () => {
-  const [currentMonth, setCurrentMonth] = useState('Mai');
+const TableauDeBord = () => {
+  const [moisActuel, setMoisActuel] = useState('Mai');
 
-  // Mock data for charts
-  const incomeVsExpenseData = {
+  // Données fictives pour les graphiques
+  const donneesRevenusVsDepenses = {
     labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
     datasets: [
       {
@@ -32,7 +32,7 @@ const Dashboard = () => {
     ],
   };
 
-  const transactionTypeData = {
+  const donneesTypesTransactions = {
     labels: ['Revenus', 'Dépenses'],
     datasets: [
       {
@@ -43,7 +43,7 @@ const Dashboard = () => {
     ],
   };
 
-  const categoryData = {
+  const donneesCategories = {
     labels: ['Alimentation', 'Transport', 'Loisirs', 'Santé', 'Éducation', 'Autres'],
     datasets: [
       {
@@ -63,13 +63,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      
-
       <div className="">
         <main>
           <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div className="px-4 py-8 sm:px-0">
-              
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="bg-white overflow-hidden shadow rounded-lg">
                   <div className="p-5">
@@ -137,7 +134,7 @@ const Dashboard = () => {
                 <div className="px-4 py-5 sm:p-6">
                   <h3 className="text-lg leading-6 font-medium text-gray-900">Revenus vs Dépenses</h3>
                   <div className="mt-5 h-80">
-                    <Line data={incomeVsExpenseData} options={{ responsive: true, maintainAspectRatio: false }} />
+                    <Line data={donneesRevenusVsDepenses} options={{ responsive: true, maintainAspectRatio: false }} />
                   </div>
                 </div>
               </div>
@@ -147,7 +144,7 @@ const Dashboard = () => {
                   <div className="px-4 py-5 sm:p-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">Types de transactions</h3>
                     <div className="mt-5 h-64">
-                      <Doughnut data={transactionTypeData} options={{ responsive: true, maintainAspectRatio: false }} />
+                      <Doughnut data={donneesTypesTransactions} options={{ responsive: true, maintainAspectRatio: false }} />
                     </div>
                   </div>
                 </div>
@@ -155,7 +152,7 @@ const Dashboard = () => {
                   <div className="px-4 py-5 sm:p-6">
                     <h3 className="text-lg leading-6 font-medium text-gray-900">Dépenses par catégorie</h3>
                     <div className="mt-5 h-64">
-                      <Bar data={categoryData} options={{ responsive: true, maintainAspectRatio: false }} />
+                      <Bar data={donneesCategories} options={{ responsive: true, maintainAspectRatio: false }} />
                     </div>
                   </div>
                 </div>
@@ -167,21 +164,21 @@ const Dashboard = () => {
                   <div className="mt-5">
                     <ul className="divide-y divide-gray-200">
                       {[
-                        { id: 1, name: 'Supermarché', amount: -85.20, date: '2023-05-15' },
-                        { id: 2, name: 'Salaire', amount: 2500, date: '2023-05-01' },
-                        { id: 3, name: 'Restaurant', amount: -45.50, date: '2023-05-10' },
-                        { id: 4, name: 'Essence', amount: -60.00, date: '2023-05-08' },
+                        { id: 1, nom: 'Supermarché', montant: -85.20, date: '2023-05-15' },
+                        { id: 2, nom: 'Salaire', montant: 2500, date: '2023-05-01' },
+                        { id: 3, nom: 'Restaurant', montant: -45.50, date: '2023-05-10' },
+                        { id: 4, nom: 'Essence', montant: -60.00, date: '2023-05-08' },
                       ].map((transaction) => (
                         <li key={transaction.id} className="py-4 flex items-center justify-between">
                           <div className="flex items-center">
                             <CreditCardIcon className="h-6 w-6 text-gray-400" />
                             <div className="ml-3">
-                              <p className="text-sm font-medium text-gray-900">{transaction.name}</p>
+                              <p className="text-sm font-medium text-gray-900">{transaction.nom}</p>
                               <p className="text-sm text-gray-500">{transaction.date}</p>
                             </div>
                           </div>
-                          <div className={`text-sm font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {transaction.amount > 0 ? '+' : ''}{transaction.amount.toFixed(2)} €
+                          <div className={`text-sm font-semibold ${transaction.montant > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {transaction.montant > 0 ? '+' : ''}{transaction.montant.toFixed(2)} €
                           </div>
                         </li>
                       ))}
@@ -200,4 +197,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default TableauDeBord;

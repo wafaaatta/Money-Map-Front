@@ -1,15 +1,45 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Notification from '../components/Notification';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../redux/features/auth_store';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { showNotification } from '../redux/features/notification_store';
 
 const Register = () => {
   const [nomUtilisateur, setNomUtilisateur] = useState('');
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
 
-  const gererSoumission = (e: React.FormEvent) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const gererSoumission = async (e) => {
     e.preventDefault();
-    // Gérer la logique d'inscription ici
-    console.log('Inscription soumise', { nomUtilisateur, email, motDePasse });
+    await dispatch(
+      registerUser({ username: nomUtilisateur, email, password: motDePasse })
+    ).then(unwrapResult)
+    .then(() => {
+        dispatch(
+            showNotification({
+              type: 'success',
+              message: 'Compte créé',
+              description: 'Votre compte a été créé',
+            })
+        )
+
+        navigate('/signin')
+    })
+    .catch((error) => {
+      const errorMessage = error.message;
+      dispatch(
+        showNotification({
+          type: 'error',
+          message: 'Erreur de connexion',
+          description: errorMessage,
+        })
+    )
+    });
   };
 
   return (
@@ -101,6 +131,7 @@ const Register = () => {
           src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"          alt="Gestion financière"
         />
       </div>
+      <Notification />
     </div>
   );
 };

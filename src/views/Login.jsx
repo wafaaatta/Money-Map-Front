@@ -1,14 +1,43 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Notification from '../components/Notification';
+import { useDispatch } from 'react-redux';
+import { showNotification } from '../redux/features/notification_store';
+import { loginUser } from '../redux/features/auth_store';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const gererSoumission = (e: React.FormEvent) => {
+  const gererSoumission = async (e) => {
     e.preventDefault();
-    // Gérer la logique de connexion ici
-    console.log('Connexion soumise', { email, motDePasse });
+   await  dispatch(
+        loginUser({ email, password: motDePasse })
+    ).then(unwrapResult)
+    .then(() => {
+        dispatch(
+            showNotification({
+              type: 'success',
+              message: 'Connexion reussie',
+              description: 'Vous avez connecté à votre compte',
+            })
+        )
+
+        navigate('/dashboard')
+    })
+    .catch((error) => {
+      const errorMessage = error.message;
+      dispatch(
+        showNotification({
+          type: 'error',
+          message: 'Erreur de connexion',
+          description: errorMessage,
+        })
+    )
+    });
   };
 
   return (
@@ -103,6 +132,7 @@ const Login = () => {
           src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"          alt="Gestion financière"
         />
       </div>
+      <Notification />
     </div>
   );
 };

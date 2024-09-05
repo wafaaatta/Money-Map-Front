@@ -5,6 +5,7 @@ import LandingView from "./views/Landing";
 import Register from "./views/Register";
 import Login from "./views/Login";
 import Dashboard from "./views/Dashboard";
+import TransactionsView from "./views/Transactions";
 
 const router = createBrowserRouter([
     {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
             {
                 path: "/dashboard",
                 element: <Dashboard />
+            },
+            {
+                path: "/transactions",
+                element: <TransactionsView />
             },
         ]
     }
