@@ -1,12 +1,11 @@
 // src/components/Footer.js
 import React from 'react';
-import './Footer.css'; // Assure-toi de créer ce fichier pour le style si nécessaire
 
 const Footer = () => {
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <p className="footer-text">© {new Date().getFullYear()} Application de Gestion de Transactions. Tous droits réservés.</p>
+    <footer className="bg-slate-800">
+      <div className="max-w-8xl mx-auto p-4">
+        <p className="text-white text-center">© {new Date().getFullYear()} Application de Gestion de Transactions. Tous droits réservés.</p>
       </div>
     </footer>
   );
