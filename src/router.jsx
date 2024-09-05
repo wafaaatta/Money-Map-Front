@@ -4,6 +4,7 @@ import Layout from "./Layout";
 import LandingView from "./views/Landing";
 import Register from "./views/Register";
 import Login from "./views/Login";
+import Dashboard from "./views/Dashboard";
 
 const router = createBrowserRouter([
     {
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <LandingView />
-            }
+            },
+            {
+                path: "/dashboard",
+                element: <Dashboard />
+            },
         ]
     }
 ])
