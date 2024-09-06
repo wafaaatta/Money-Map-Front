@@ -20,7 +20,7 @@ const Login = () => {
     .then(() => {
         dispatch(
             showNotification({
-              type: 'success',
+              type: 'info',
               message: 'Connexion reussie',
               description: 'Vous avez connecté à votre compte',
             })

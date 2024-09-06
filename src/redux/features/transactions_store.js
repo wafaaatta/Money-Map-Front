@@ -1,7 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import ApiError from "../../ApiError";
-import { apiUrl } from "../../constants/app_constants";
 import axiosHttp from "../../utils/axiosClient";
 
 const initialState = {
@@ -17,7 +14,7 @@ export const getTransactions = createAsyncThunk(
             const response = await axiosHttp.get(`transactions`);
             return response.data;
         }catch(error){
-            throw ApiError.from(error);
+            throw (error.response?.data).message;
         }
     }
 )
@@ -34,7 +31,7 @@ export const createTransaction = createAsyncThunk(
             });
             return response.data;
         }catch(error){
-            throw ApiError.from(error);
+            throw (error.response?.data).message;
         }
     }
 )
@@ -48,7 +45,7 @@ export const deleteTransaction = createAsyncThunk(
             await axiosHttp.delete(`transactions/${id}`);
             return {id};
         }catch(error){
-            throw ApiError.from(error);
+            throw (error.response?.data).message;
         }
     }
 )

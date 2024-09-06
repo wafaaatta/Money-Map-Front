@@ -1,9 +1,8 @@
 import { Navigate } from "react-router-dom";
-import { checkAuthentication } from "../utils/authentication";
+import { useSelector } from "react-redux";
 
 const RequireAuth = ({ children }) => {
-  // const userIsLogged = useLoginStatus(); // Your hook to get login status
-  const userIsLogged = checkAuthentication();
+  const userIsLogged = useSelector((state) => state.auth_store.isAuthenticated);
 
   
   

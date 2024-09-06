@@ -1,15 +1,13 @@
 import axios from "axios";
-import { getAuthenticationToken } from "./authentication";
-import { apiUrl } from "../constants/app_constants";
 
 const axiosHttp = axios.create({
-    baseURL: `${apiUrl}`,
+    baseURL: `http://127.0.0.1:8000/api`,
 });
 
 axiosHttp.interceptors.request.use((config) => {
     console.log('inside request intercept');
     
-    const auth_token = getAuthenticationToken()
+    const auth_token = localStorage.getItem('token')
     config.headers['Authorization'] = `Bearer ${auth_token}`
     
     return config;

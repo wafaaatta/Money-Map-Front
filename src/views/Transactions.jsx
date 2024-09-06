@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { PlusIcon } from 'lucide-react';
+import { Hash, PlusIcon, Text } from 'lucide-react';
 import Modal from '../components/Modal';
 import Select from '../components/select';
 import { Input } from '../components/inputField';
-import { Card } from '../components/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTransaction, deleteTransaction, getTransactions } from '../redux/features/transactions_store';
 import moment from 'moment/moment';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { showNotification } from '../redux/features/notification_store';
-import { DangerModal } from '../components/DangerModal';
+import Button from '../components/Button';
+import { BiError } from 'react-icons/bi';
 
 const TransactionsView = () => {
   
@@ -113,20 +113,17 @@ const TransactionsView = () => {
         <main>
           <div className="max-w-8xl mx-auto sm:px-6 lg:px-8">
             <div className="">
-
-              <Card
-                title={'Transactions'}
-                headerAction={
-                  <button
+              <div className="flex justify-between items-center mb-4">
+                <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+              <button
                   onClick={() => setModalOuverte(true)}
                   className="inline-flex items-center px-4 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
                   Ajouter une transaction
                 </button>
-                }
-              >
-              <table className="min-w-full divide-y divide-gray-200">
+              </div>
+              <table className="min-w-full border shadow">
                   <thead className="bg-gray-50 shadow border rounded">
                     <tr className='border'>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -194,18 +191,14 @@ const TransactionsView = () => {
                     ))}
                   </tbody>
                 </table>
-              </Card>
             </div>
           </div>
         </main>
       </div>
 
-      <Modal isOpen={modalOuverte} onClose={() => setModalOuverte(false)}>
+      <Modal isOpen={modalOuverte} onClose={() => setModalOuverte(false)} title={'Ajouter une nouvelle transaction'}>
       <div className="sm:flex sm:items-start">
                   <div className=" text-center  sm:text-left w-full">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                      Ajouter une nouvelle transaction
-                    </h3>
                     <div className="mt-2">
                       <div className="space-y-6">
                         <div className="">
@@ -220,6 +213,7 @@ const TransactionsView = () => {
                             />
                           <Input 
                               label="Montant"
+                              icon={Hash}
                               value={amount}
                               onChange={e => setAmount(e.target.value)}
                               helperText="Montant de la transaction"
@@ -228,6 +222,7 @@ const TransactionsView = () => {
                             />
                           <div className="sm:col-span-6">
                             <Input 
+                              icon={Text}
                               label="Description"
                               value={description}
                               onChange={e => setDescription(e.target.value)}
@@ -251,14 +246,23 @@ const TransactionsView = () => {
                 </div>
       </Modal>
 
-      <DangerModal 
-        isOpen={isDeleteModalOuverte}
-        onClose={() => setIsDeleteModalOuverte(false)}
-        title="Suppression de la transaction"
-        content="Etes-vous sûr de vouloir supprimer cette transaction?"
-        onAccept={() => handleDeleteTransaction()}
-        onCancel={() => setIsDeleteModalOuverte(false)}
-      />
+      <Modal title={"Suppression de la transaction"} isOpen={isDeleteModalOuverte} onClose={() => setIsDeleteModalOuverte(false)}>
+      <div className="mt-2">
+        <p className="text-sm text-gray-500">{"Etes-vous sûr de vouloir supprimer cette transaction?"}</p>
+        <div className='flex items-center mt-2 p-2 bg-red-100 rounded'>
+            <BiError className="w-6 h-6 text-red-600 mr-2" />
+            <p className="text-sm text-red-600"> Cette action ne peut pas &ecirc;tre annul&eacute;e. </p>
+        </div>
+      </div>
+      <div className="mt-4 flex justify-end space-x-2">
+        <Button size="sm" color="gray" variant="outline" onClick={() => setIsDeleteModalOuverte(false)}>
+          Annuler
+        </Button>
+        <Button size="sm" color="red" onClick={handleDeleteTransaction}>
+          Supprimer
+        </Button>
+      </div>
+    </Modal>
     </div>
   );
 };
