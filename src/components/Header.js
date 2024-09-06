@@ -2,10 +2,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/logo_slug.png';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/features/auth_store';
 
 const Header = () => {
   const {isAuthenticated, user} = useSelector((state) => state.auth_store)
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    window.location.reload();
+  };
 
   return (
     <header className="bg-white shadow sticky top-0 z-10">
@@ -25,9 +32,18 @@ const Header = () => {
                 <div className="text-gray-600">
                   Bonjour <span className="font-semibold text-blue-500">{user.username}</span>
                 </div>
-                <Link to="/logout" className="text-red-600 hover:text-red-700">Se d&eacute;connecter</Link>
+                <p onClick={handleLogout} className="cursor-pointer text-red-600 hover:text-red-700">Se d&eacute;connecter</p>
               </>
             )}
+
+            {
+              !isAuthenticated && (
+                <>
+                  <Link to="/signin" className="text-gray-600 hover:text-blue-600">Se connecter</Link>
+                  <Link to="/register" className="text-gray-600 hover:text-blue-600">S'enregistrer</Link>
+                </>
+              )
+            }
           </div>
         </div>
       </header>
