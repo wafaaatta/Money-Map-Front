@@ -2,10 +2,7 @@ import axios from "axios";
 
 const axiosHttp = axios.create({
     //baseURL: `http://127.0.0.1:8000/api`, old
-    baseURL: `http://45.77.61.207/api`, //new
-    httpsAgent: new https.Agent({  
-        rejectUnauthorized: false
-      })
+    baseURL: `http://104.238.191.110/api`, //new
 });
 
 axiosHttp.interceptors.request.use((config) => {
