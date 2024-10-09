@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { Line, Doughnut, Bar } from 'react-chartjs-2';
-import { ArrowUpIcon, ArrowDownIcon, BellIcon, CreditCardIcon, WalletIcon, ChartBarIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
-import { useDispatch, useSelector } from 'react-redux';
-import { getTransactions } from '../redux/features/transactions_store';
+import { Line, Doughnut } from 'react-chartjs-2';
+import { ArrowUpIcon, ArrowDownIcon, CreditCardIcon, WalletIcon } from '@heroicons/react/24/outline';
 
 ChartJS.register(...registerables);
 
 const TableauDeBord = () => {
-  const [moisActuel, setMoisActuel] = useState('Mai');
 
-  const dispatch = useDispatch();
-  const {transactions} = useSelector((state) => state.transactions_store);
+  // const dispatch = useDispatch();
+  // const {transactions} = useSelector((state) => state.transactions_store);
+  const transactions = [
+    { id: 1, type: 'income', amount: 100, transaction_date: '2024-01-01' },
+    { id: 2, type: 'expense', amount: 50, transaction_date: '2024-01-02' },
+    { id: 3, type: 'income', amount: 200, transaction_date: '2024-01-03' },
+  ]
 
-  useEffect(() => {
-    dispatch(getTransactions())
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(getTransactions())
+  // }, [dispatch])
 
   // Données fictives pour les graphiques
   const donneesRevenusVsDepenses = {
